@@ -26,7 +26,39 @@ $ gem install errors_to_sentences
 
 ## Usage
 
-TODO: Write usage instructions here
+To generate sentence errors just call `.to_sentences` method on instance errors. For an instance:
+
+Let's say we have a model that looks like:
+
+```ruby
+class Refueling < ApplicationRecord
+  belongs_to :user
+
+  with_options numericality: { greater_than: 0 } do
+    validates :liters,     presence: true
+    validates :kilometers, presence: true
+    validates :cost,       allow_nil: true
+  end
+end
+```
+
+```shell
+$ refueling = Refueling.new
+ => #<Refueling id: nil, user_id: nil, liters: nil, cost: nil, kilometers: nil, avg_fuel_consumption: nil, note: nil, created_at: nil, updated_at: nil>
+
+$ refueling.validate!
+ ActiveRecord::RecordInvalid (Validation failed: User must exist, Liters is not a number, Liters can't be blank, Kilometers is not a number, Kilometers can't be blank)
+
+$ refueling.errors.full_messages
+ => ["User must exist", "Liters is not a number", "Liters can't be blank", "Kilometers is not a number", "Kilometers can't be blank"]
+```
+
+and now **`.to_sentences`** method
+
+```shell
+$ refueling.errors.to_sentences
+ => ["User must exist", "Liters is not a number and can't be blank", "Kilometers is not a number and can't be blank"]
+```
 
 ## Development
 
